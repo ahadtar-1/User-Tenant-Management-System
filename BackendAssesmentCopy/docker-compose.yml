@@ -5,14 +5,14 @@ services:
     build: backend/postgres-dev/
     container_name: postgres
     ports:
-    - "5430:5430"
+      - "5430:5430"
     restart: always
     volumes:
-    - ./backend/db_data/:/var/lib/postgresql/data
+      - ./backend/db_data/:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: $POSTGRES_USERNAME
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-   
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: imroz
+
   adminer:
     image: adminer
     container_name: adminertwo
@@ -24,7 +24,7 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: postgres
   assesment:
-    container_name: projecttwo
+    container_name: consumer
     build: backend/assesment
     command: sh ./docker-entrypoint.sh
     restart: always
@@ -42,7 +42,7 @@ services:
       POSTGRES_DATABASE: projecttdb
       MONGO_ATLAS_CONNECTION_STRING: None
   assesment_producer:
-    container_name: projecttwo_producer
+    container_name: producer
     build: backend/assesment_producer
     command: sh ./docker-entrypoint.sh
     restart: always
@@ -63,23 +63,22 @@ services:
     image: bitnami/zookeeper:latest
     container_name: zookeepertwo
     ports:
-     - "2181:2181"
+      - "2181:2181"
     environment:
-     - ALLOW_ANONYMOUS_LOGIN=yes
+      - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
     image: 'bitnami/kafka:latest'
     container_name: kafkatwo
     ports:
-     - "9092:9092"
-    expose:
-     - "9093" 
+      - '9092:9092'
+      - '9093:9093'
     depends_on:
-     - zookeeper
+      - zookeeper
     environment:
-     KAFKA_BROKER_ID: 1
-     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-     ALLOW_PLAINTEXT_LISTENER: 1
-     KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
-     KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9092
-     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
-     KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: 1
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
